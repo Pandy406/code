@@ -1,0 +1,40 @@
+#library
+
+library(ggplot2)
+library(impute)
+
+
+setwd("~\\SUR")
+
+
+library(survminer) # 
+library(survival) # 
+
+colon = read.table("PRMT1survival.txt",header = T,sep="\t")
+
+nodes.cut <- surv_cutpoint(colon, time= 'OS_time', event = 'STATUS', variables = 'PRMT1') 
+plot(nodes.cut, "PRMT1", palette = "nejm")
+
+
+pdf(file="./3.0. nodes.cut.pdf", width=7.5, height=5, onefile = FALSE)
+plot(nodes.cut, "PRMT1", palette = "nejm")
+
+colon <- colon %>% mutate(nodes_group1 = ifelse(PRMT1 >= '7.32', "High", "Low")) 
+colon$nodes_group1 <- factor(colon$nodes_group1)
+
+summary(colon)
+
+
+
+fit = survfit(Surv(OS_time,STATUS)~nodes_group1,data=colon)
+ggsurvplot(fit,conf.int=F,pval = T,xlab = "Follow up time(months)"
+           ,legend.labs = c("PRMT1 High", "PRMT1 Low"),
+           legend="right",palette=c("red", "blue"))
+
+
+
+
+
+
+
+

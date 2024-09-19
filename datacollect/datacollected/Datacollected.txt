@@ -1,0 +1,20 @@
+setwd("\~\datacollected")
+library(tidyverse) 
+library(GEOquery)
+
+f<-'GSE30219.Rdata'
+if(!file.exists(f)){
+  gset<-getGEO('GSE30219',destdir='.',
+               AnnotGPL=F,
+               getGPL=F)
+  save(gset,file=f)
+}
+load('GSE30219.Rdata')
+class(gset)
+
+a=gset[[1]] 
+class(a)
+dat=exprs(a) 
+pd=pData(a) 
+
+write.table(pd,"GSE30219clinical.txt",sep="\t",quote = F,col.names = T)
